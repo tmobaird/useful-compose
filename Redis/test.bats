@@ -5,19 +5,14 @@
 # but makes tests a little more indpendent.
 #
 # setup() {
-#   docker-compose up -d postgres
+#   docker-compose up -d redis
 # }
 
 # teardown() {
 #   docker-compose down
 # }
 
-expectedVsActual() {
-    echo "================="
-    echo "Expected: $1"
-    echo "Actual $2"
-    echo "================="
-}
+load ../test/test_helper
 
 @test "starts a service on port 6379" {
   expected=1

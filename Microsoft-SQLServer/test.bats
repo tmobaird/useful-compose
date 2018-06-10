@@ -12,12 +12,7 @@
 #   docker-compose down
 # }
 
-expectedVsActual() {
-    echo "================="
-    echo "Expected: $1"
-    echo "Actual $2"
-    echo "================="
-}
+load ../test/test_helper
 
 @test "starts a service on port 1433" {
   expected=1
