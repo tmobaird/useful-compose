@@ -19,28 +19,19 @@ expectedVsActual() {
     echo "================="
 }
 
-@test "starts a service on port 5432" {
+@test "starts a service on port 6379" {
   expected=1
 
-  result="$(lsof -i :5432 | wc -l)"
+  result="$(lsof -i :6379 | wc -l)"
 
   expectedVsActual $expected $result
   [ $result -gt $expected ]
 }
 
-@test "starts a postgres service on localhost" {
+@test "starts a new redis docker container" {
   expected=1
 
-  result="$(lsof -i :5432 | grep localhost:postgresql | wc -l)"
-
-  expectedVsActual $expected $result
-  [ $result -eq $expected ]
-}
-
-@test "starts a new postgres docker container" {
-  expected=1
-
-  result="$(docker ps | grep postgres | wc -l)"
+  result="$(docker ps | grep redis | wc -l)"
 
   expectedVsActual $expected $result
   [ $result -eq $expected ]
