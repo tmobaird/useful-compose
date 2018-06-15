@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  activemq:
+    image: webcenter/activemq:latest
+    environment:
+      ACTIVEMQ_CONFIG_NAME: 'amqp'
+      ACTIVEMQ_CONFIG_DEFAULTACCOUNT: 'false'
+      ACTIVEMQ_ADMIN_LOGIN: 'admin'
+      ACTIVEMQ_ADMIN_PASSWORD: 'your_password'
+      ACTIVEMQ_USERS_myproducer: 'producerpassword'
+      ACTIVEMQ_GROUPS_writes: 'myproducer'
+      ACTIVEMQ_USERS_myconsumer: 'consumerpassword'
+      ACTIVEMQ_GROUPS_reads: 'myconsumer'
+      ACTIVEMQ_JMX_user1_role: 'readwrite'
+      ACTIVEMQ_JMX_user1_password: 'jmx_password'
+      ACTIVEMQ_JMX_user2_role: 'read'
+      ACTIVEMQ_JMX_user2_password: 'jmx2_password'
+      ACTIVEMQ_CONFIG_MINMEMORY: '1024'
+      ACTIVEMQ_CONFIG_MAXMEMORY: '4096'
+      ACTIVEMQ_CONFIG_SCHEDULERENABLED: 'true'
+    ports:
+      - '8161:8161'
+      - '61616:61616'
+      - '61613:61613'
+    restart: always
