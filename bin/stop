@@ -1,0 +1,8 @@
+#!/bin/bash
+
+services=( "ActiveMQ" "Microsoft-SQLServer" "Postgres" "Redis" )
+
+for i in "${services[@]}"
+do
+    ( cd $i ; docker-compose stop )
+done
