@@ -7,7 +7,7 @@ services:
       ACTIVEMQ_CONFIG_NAME: 'amqp'
       ACTIVEMQ_CONFIG_DEFAULTACCOUNT: 'false'
       ACTIVEMQ_ADMIN_LOGIN: 'admin'
-      ACTIVEMQ_ADMIN_PASSWORD: 'your_password'
+      ACTIVEMQ_ADMIN_PASSWORD: 'admin'
       ACTIVEMQ_USERS_myproducer: 'producerpassword'
       ACTIVEMQ_GROUPS_writes: 'myproducer'
       ACTIVEMQ_USERS_myconsumer: 'consumerpassword'
