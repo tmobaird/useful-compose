@@ -7,8 +7,9 @@ This repo includes a list of usable docker compose files to run commonly used se
 - [x] Postgres
 - [x] Microsoft SQL Server
 - [x] Redis
-- [ ] RabbitMQ
+- [x] Apache Kafka
 - [x] ActiveMQ
+- [ ] RabbitMQ
 - [ ] MongoDB
 
 ### Testing :white_check_mark:
