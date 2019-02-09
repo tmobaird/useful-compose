@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  rabbitmq:
+    image: rabbitmq:latest
+    ports:
+      - '8161:8161'
+      - '61616:61616'
+      - '61613:61613'
+    restart: always
