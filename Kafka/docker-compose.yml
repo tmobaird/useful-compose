@@ -4,50 +4,46 @@ services:
     image: 'confluentinc/cp-zookeeper:5.1.0'
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
     image: 'confluentinc/cp-kafka:5.1.0'
     environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:19092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=WARN,kafka.producer.async.DefaultEventHandler=WARN,state.change.logger=WARN"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_ADVERTISED_HOST_NAME: localhost
+      # otherwise this will try to phone home. The proxy will prevent that ... and the container will
+      # shutdown.
+      KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: false
     depends_on:
       - zookeeper
     ports:
       - "9092:9092"
       - "19092:19092"
-  schema-registry:
-    image: 'confluentinc/cp-schema-registry:5.3.0'
-    hostname: schema-registry
-    ports:
-      - "8083:8083"
+
+  # simple web UI to inspect topics etc.
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    # if there ends up being a race condition between kafka and the kafka-ui we
+    # may need to tell kafka to restart this service on failure
+    # restart: on-failure
     environment:
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:19092
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8083
+      KAFKA_CLUSTERS_0_NAME: "local dev env"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:19092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+      # springbook core props available for config:
+      #   https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#application-properties.core.logging.level
+      # configure loggers
+      LOGGING_LEVEL_ROOT: error
+      LOGGING_LEVEL_COM_PROVECTUS: error
+      # for some reason this doesn't seem to work - so we get debug messages in docker logs
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: error
     depends_on:
       - zookeeper
       - kafka
-  api:
-    image: 'confluentinc/cp-kafka-rest'
-    environment:
-      KAFKA_REST_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_REST_LISTENERS: http://0.0.0.0:8082/
-      KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:8083/
-      KAFKA_REST_HOST_NAME: kafka-rest-proxy
-      KAFKA_REST_BOOTSTRAP_SERVERS: kafka:19092
-    depends_on:
-      - zookeeper
-      - kafka
-      - schema-registry
     ports:
-      - "8082:8082"
-  topics-ui:
-    image: 'landoop/kafka-topics-ui'
-    environment:
-      KAFKA_REST_PROXY_URL: 'http://localhost:8082'
-      PROXY: 'false'
-    ports:
-      - "8000:8000"
+      - "8080:8080"
